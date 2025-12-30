@@ -1,5 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
+import React from "react"
 
 interface Props {
   id: string
@@ -8,7 +9,7 @@ interface Props {
   onClick: () => void
 }
 
-export function LayerRow({ id, label, selected, onClick }: Props) {
+export const LayerRow = React.memo(function LayerRow({ id, label, selected, onClick }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id })
 
@@ -28,4 +29,4 @@ export function LayerRow({ id, label, selected, onClick }: Props) {
       {label}
     </div>
   )
-}
+})

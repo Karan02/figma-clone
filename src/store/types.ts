@@ -26,19 +26,40 @@ export interface TextElement extends BaseElement {
   type: "text"
   text: string
   fontSize: number
+  fontFamily?: string
   fontWeight: "normal" | "bold"
   fontStyle: "normal" | "italic"
+  textDecoration?: "" | "underline"
   color: string
 }
 
-export interface ShapeElement extends BaseElement {
+export interface ShapeElement {
+  id: string
   type: "shape"
   shape: "rect" | "circle" | "line"
-  fill: string
+
+  x: number
+  y: number
+  width: number
+  height: number
+  rotation: number
+  opacity: number
+
+  fill?: string
+  stroke?: string
+  strokeWidth?: number
 }
 
+
 export interface ImageElement extends BaseElement {
+  id: string
   type: "image"
+  x: number
+  y: number
+  width: number
+  height: number
+  rotation: number
+  opacity: number
   src: string
 }
 

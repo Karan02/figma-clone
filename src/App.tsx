@@ -3,15 +3,17 @@ import { CardCanvas } from "./canvas/CardCanvas"
 import { LayersPanel } from "./panels/LayersPanel"
 import { PropertiesPanel } from "./panels/PropertiesPanel"
 import { useEditorStore } from "./store/editorStore"
-import { createTextElement, createRectElement } from "./store/elementFactory"
+import { createTextElement, createRectElement, createCircleElement, createLineElement } from "./store/elementFactory"
 import { useKeyboardMove } from "./hooks/useKeyboardMove"
 import { useUndoRedo } from "./hooks/useUndoRedo"
 import { exportCanvas } from "./utils/export"
+import { createImageElement } from "./store/elementFactory"
+import { useDeleteKey } from "./hooks/useDeleteKey"
 
 export default function App() {
   useKeyboardMove()
   useUndoRedo()
-
+  useDeleteKey()
   const stageRef = useRef<any>(null)
   const uiLayerRef = useRef<any>(null)
 
@@ -25,6 +27,7 @@ export default function App() {
 
   return (
     <div className="h-screen w-screen flex bg-gray-100">
+
       {/* LEFT SIDEBAR — Layers */}
       <aside className="w-64 border-r bg-white flex-shrink-0">
         <LayersPanel />
@@ -41,12 +44,41 @@ export default function App() {
             Add Text
           </button>
 
-          <button
-            className={btn}
-            onClick={() => addElement(createRectElement())}
-          >
-            Add Shape
-          </button>
+        <button className={btn} onClick={() => addElement(createRectElement())}>
+          Add Rectangle
+        </button>
+
+        <button className={btn} onClick={() => addElement(createCircleElement())}>
+          Add Circle
+        </button>
+
+        <button className={btn} onClick={() => addElement(createLineElement())}>
+          Add Line
+        </button>
+<button
+  className={btn}
+  onClick={() => {
+    const input = document.createElement("input")
+    input.type = "file"
+    input.accept = "image/*"
+
+    input.onchange = () => {
+      const file = input.files?.[0]
+      if (!file) return
+
+      const reader = new FileReader()
+      reader.onload = () => {
+        addElement(createImageElement(reader.result as string))
+      }
+      reader.readAsDataURL(file)
+    }
+
+    input.click()
+  }}
+>
+  Add Image
+</button>
+
 
           <div className="w-px h-6 bg-gray-300 mx-2" />
 
@@ -113,3 +145,7 @@ export default function App() {
     </div>
   )
 }
+// function useDeleteKey() {
+//   throw new Error("Function not implemented.")
+// }
+

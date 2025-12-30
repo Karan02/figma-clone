@@ -45,6 +45,9 @@ interface EditorState {
   future: CanvasElement[][]
   undo: () => void
   redo: () => void
+
+  deleteSelected: () => void
+
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -97,6 +100,21 @@ export const useEditorStore = create<EditorState>((set) => ({
     })),
 
   clearSelection: () => set({ selectedIds: [] }),
+
+  deleteSelected: () =>
+  set((state) => {
+    if (state.selectedIds.length === 0) return state
+
+    return {
+      past: [...state.past, state.elements].slice(-20),
+      future: [],
+      elements: state.elements.filter(
+        (el) => !state.selectedIds.includes(el.id)
+      ),
+      selectedIds: [],
+    }
+  }),
+
 
   reorderElements: (from, to) =>
     set((state) => {

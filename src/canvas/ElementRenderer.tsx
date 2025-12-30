@@ -1,5 +1,5 @@
 import type { CanvasElement } from "../store/types"
-import { RectElement } from "../elements/ShapeElement"
+import { ShapeElementView } from "../elements/ShapeElement"
 import { TextElementView } from "../elements/TextElement"
 import { ImageElementView } from "../elements/ImageElement"
 
@@ -12,7 +12,7 @@ export function ElementRenderer({ element }: Props) {
     case "text":
       return <TextElementView element={element} />
     case "shape":
-      return <RectElement element={element} />
+      return <ShapeElementView  element={element} />
     case "image":
       return <ImageElementView element={element} />
     case "group":

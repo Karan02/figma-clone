@@ -1,53 +1,44 @@
 import { Text } from "react-konva"
-import type { TextElement } from "../store/types"
 import { useEditorStore } from "../store/editorStore"
-
-import { snapPosition } from "../utils/snapping"
-
-
+import type { TextElement } from "../store/types"
 
 export function TextElementView({ element }: { element: TextElement }) {
-  const select = useEditorStore(s => s.selectElement)
-  const update = useEditorStore(s => s.updateElement)
-  const clearGuides = useEditorStore((s) => s.clearAlignmentGuides)
+  const select = useEditorStore((s) => s.selectElement)
+  const update = useEditorStore((s) => s.updateElement)
+
+  const fontStyle = [
+    element.fontWeight === "bold" ? "bold" : "",
+    element.fontStyle === "italic" ? "italic" : "",
+  ]
+    .filter(Boolean)
+    .join(" ") || "normal"
 
   return (
     <Text
+      id={element.id}
       x={element.x}
       y={element.y}
       width={element.width}
-      height={element.height}
       text={element.text}
       fontSize={element.fontSize}
       fill={element.color}
-      rotation={element.rotation}
-      opacity={element.opacity}
+
+      /* 🔴 REQUIRED */
+      fontFamily="Arial"
+      fontStyle={fontStyle}
+      textDecoration={element.textDecoration}
+
       draggable
       onClick={(e) => {
         e.cancelBubble = true
-        select(element.id, e.evt.ctrlKey || e.evt.metaKey)
+        select(element.id)
       }}
-      onDragEnd={(e) => {
+      onDragEnd={(e) =>
         update(element.id, {
           x: e.target.x(),
           y: e.target.y(),
         })
-        clearGuides()
-      }}
-      onDragMove={(e) => {
-  const { x, y } = snapPosition({
-    x: e.target.x(),
-    y: e.target.y(),
-    width: element.width,
-    height: element.height,
-    canvasWidth: 600,
-    canvasHeight: 350,
-  })
-
-  e.target.x(x!)
-  e.target.y(y!)
-}}
-
+      }
     />
   )
 }
