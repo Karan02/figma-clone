@@ -23,8 +23,16 @@ export const LayerRow = React.memo(function LayerRow({ id, label, selected, onCl
       {...attributes}
       {...listeners}
       onClick={onClick}
-      className={`cursor-pointer px-2 py-1 rounded text-sm mb-1
-        ${selected ? "bg-blue-100" : "hover:bg-gray-200"}`}
+       className={`
+    px-2 py-1 rounded cursor-pointer
+    text-sm
+    hover:bg-gray-100 dark:hover:bg-gray-700
+    ${
+      selected
+        ? "bg-blue-100 text-blue-900 dark:bg-blue-600 dark:text-white"
+        : ""
+    }
+  `}
     >
       {label}
     </div>

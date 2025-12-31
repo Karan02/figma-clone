@@ -7,6 +7,8 @@ import type {
   ShapeElement,
   TextElement,
 } from "./types"
+import { getBoundingBox } from "../utils/groupUtils"
+import { nanoid } from "nanoid"
 
 const HISTORY_LIMIT = 20
 
@@ -160,71 +162,72 @@ export const useEditorStore = create<EditorState>((set) => ({
 
   /* ---------- grouping ---------- */
 
-  groupSelected: () =>
-    set((state) => {
-      if (state.selectedIds.length < 2) return state
+groupSelected: () =>
+  set((state) => {
+    if (state.selectedIds.length < 2) return state
 
-      const selected = state.elements.filter((el) =>
-        state.selectedIds.includes(el.id)
-      )
+    const selected = state.elements.filter(el =>
+      state.selectedIds.includes(el.id)
+    )
 
-      const remaining = state.elements.filter(
-        (el) => !state.selectedIds.includes(el.id)
-      )
+    if (selected.length < 2) return state
 
-      const minX = Math.min(...selected.map((e) => e.x))
-      const minY = Math.min(...selected.map((e) => e.y))
-      const maxX = Math.max(...selected.map((e) => e.x + e.width))
-      const maxY = Math.max(...selected.map((e) => e.y + e.height))
+    const bounds = getBoundingBox(selected)
 
-      const group: GroupElement = {
-        id: crypto.randomUUID(),
-        type: "group",
-        x: minX,
-        y: minY,
-        width: maxX - minX,
-        height: maxY - minY,
-        rotation: 0,
-        opacity: 1,
-        children: selected.map((el) => ({
-          ...el,
-          x: el.x - minX,
-          y: el.y - minY,
-        })),
-      }
+    const children = selected.map(el => ({
+      ...el,
+      x: el.x - bounds.x,
+      y: el.y - bounds.y,
+    }))
 
-      return {
-        past: [...state.past, state.elements].slice(-HISTORY_LIMIT),
-        future: [],
-        elements: [...remaining, group],
-        selectedIds: [group.id],
-      }
-    }),
+    const group = {
+      id: nanoid(),
+      type: "group" as const,
+      x: bounds.x,
+      y: bounds.y,
+      width: bounds.width,
+      height: bounds.height,
+      rotation: 0,
+      opacity: 1,
+      children,
+    }
 
-  ungroupSelected: () =>
-    set((state) => {
-      const group = state.elements.find(
-        (el) => el.id === state.selectedIds[0] && el.type === "group"
-      ) as GroupElement | undefined
+    return {
+      past: [...state.past, state.elements].slice(-20),
+      future: [],
+      elements: [
+        ...state.elements.filter(el => !state.selectedIds.includes(el.id)),
+        group,
+      ],
+      selectedIds: [group.id],
+    }
+  }),
+ungroupSelected: () =>
+  set((state) => {
+    const group = state.elements.find(
+      (el): el is GroupElement =>
+        el.id === state.selectedIds[0] && el.type === "group"
+    )
 
-      if (!group) return state
+    if (!group) return state
 
-      const restored = group.children.map((child) => ({
-        ...child,
-        x: child.x + group.x,
-        y: child.y + group.y,
-      }))
+    const restored: CanvasElement[] = group.children.map((child) => ({
+      ...child,
+      x: child.x + group.x,
+      y: child.y + group.y,
+    }))
 
-      return {
-        past: [...state.past, state.elements].slice(-HISTORY_LIMIT),
-        future: [],
-        elements: [
-          ...state.elements.filter((el) => el.id !== group.id),
-          ...restored,
-        ],
-        selectedIds: restored.map((el) => el.id),
-      }
-    }),
+    return {
+      past: [...state.past, state.elements].slice(-20),
+      future: [],
+      elements: [
+        ...state.elements.filter((el) => el.id !== group.id),
+        ...restored,
+      ],
+      selectedIds: restored.map((el) => el.id),
+    }
+  }),
+
 
   /* ---------- undo / redo ---------- */
 

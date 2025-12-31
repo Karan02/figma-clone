@@ -62,6 +62,19 @@ export interface ImageElement extends BaseElement {
   opacity: number
   src: string
 }
+export interface SvgElement {
+  id: string
+  type: "svg"
+  x: number
+  y: number
+  width: number
+  height: number
+  rotation: number
+  opacity: number
+
+  path: string       // SVG path data
+  fill: string
+}
 
 export interface GroupElement extends BaseElement {
   type: "group"
@@ -73,5 +86,6 @@ export type CanvasElement =
   | ShapeElement
   | ImageElement
   | GroupElement
+  | SvgElement
 
 

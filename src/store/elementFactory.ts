@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid"
-import type { TextElement, ShapeElement, ImageElement } from "./types"
+import type { TextElement, ShapeElement, ImageElement, SvgElement } from "./types"
 
 export function createRectElement(): ShapeElement {
   return {
@@ -78,5 +78,20 @@ export function createImageElement(src: string): ImageElement {
     rotation: 0,
     opacity: 1,
     src,
+  }
+}
+
+export function createSvgElement(path: string): SvgElement {
+  return {
+    id: nanoid(),
+    type: "svg",
+    x: 150,
+    y: 150,
+    width: 48,
+    height: 48,
+    rotation: 0,
+    opacity: 1,
+    path,
+    fill: "#111827",
   }
 }

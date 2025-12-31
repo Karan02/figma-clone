@@ -1,5 +1,6 @@
 import type { TextElement } from "../../store/types"
 import { useEditorStore } from "../../store/editorStore"
+import { panelBtnActive, panelBtnBase } from "../../utils/utilityBtn"
 
 export function TextProperties({ element }: { element: TextElement }) {
   const update = useEditorStore((s) => s.updateTextElement)
@@ -8,7 +9,12 @@ export function TextProperties({ element }: { element: TextElement }) {
     <div className="space-y-2">
       <label className="block text-xs">Text</label>
       <input
-        className="w-full border px-2 py-1 text-sm"
+          className="
+    w-full px-2 py-1 text-sm rounded border
+    bg-white text-gray-900 border-gray-300
+    dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600
+    focus:outline-none focus:ring-2 focus:ring-blue-500
+  "
         value={element.text}
         onChange={(e) =>
           update(element.id, { text: e.target.value })
@@ -18,7 +24,12 @@ export function TextProperties({ element }: { element: TextElement }) {
       <label className="block text-xs">Font Size</label>
       <input
         type="number"
-        className="w-full border px-2 py-1 text-sm"
+          className="
+    w-full px-2 py-1 text-sm rounded border
+    bg-white text-gray-900 border-gray-300
+    dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600
+    focus:outline-none focus:ring-2 focus:ring-blue-500
+  "
         value={element.fontSize}
         onChange={(e) =>
           update(element.id, { fontSize: Number(e.target.value) })
@@ -33,11 +44,11 @@ export function TextProperties({ element }: { element: TextElement }) {
           update(element.id, { color: e.target.value })
         }
       />
-      <div className="flex gap-2 mt-2">
+<div className="flex gap-2 mt-2">
   {/* BOLD */}
   <button
-    className={`px-2 py-1 border rounded ${
-      element.fontWeight === "bold" ? "bg-gray-200" : ""
+    className={`${panelBtnBase} ${
+      element.fontWeight === "bold" ? panelBtnActive : ""
     }`}
     onClick={() =>
       update(element.id, {
@@ -51,8 +62,8 @@ export function TextProperties({ element }: { element: TextElement }) {
 
   {/* ITALIC */}
   <button
-    className={`px-2 py-1 border rounded ${
-      element.fontStyle === "italic" ? "bg-gray-200" : ""
+    className={`${panelBtnBase} ${
+      element.fontStyle === "italic" ? panelBtnActive : ""
     }`}
     onClick={() =>
       update(element.id, {
@@ -66,8 +77,8 @@ export function TextProperties({ element }: { element: TextElement }) {
 
   {/* UNDERLINE */}
   <button
-    className={`px-2 py-1 border rounded ${
-      element.textDecoration === "underline" ? "bg-gray-200" : ""
+    className={`${panelBtnBase} ${
+      element.textDecoration === "underline" ? panelBtnActive : ""
     }`}
     onClick={() =>
       update(element.id, {
@@ -79,6 +90,7 @@ export function TextProperties({ element }: { element: TextElement }) {
     <u>U</u>
   </button>
 </div>
+
 
     </div>
   )

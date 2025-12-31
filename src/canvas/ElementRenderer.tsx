@@ -2,6 +2,8 @@ import type { CanvasElement } from "../store/types"
 import { ShapeElementView } from "../elements/ShapeElement"
 import { TextElementView } from "../elements/TextElement"
 import { ImageElementView } from "../elements/ImageElement"
+import { SvgElementView } from "../elements/SvgElements"
+import { GroupElementView } from "../elements/GroupElement"
 
 interface Props {
   element: CanvasElement
@@ -16,13 +18,9 @@ export function ElementRenderer({ element }: Props) {
     case "image":
       return <ImageElementView element={element} />
     case "group":
-        return element.children.map(child => (
-            <ElementRenderer key={child.id} element={{
-            ...child,
-            x: child.x + element.x,
-            y: child.y + element.y,
-            }} />
-        ))
+      return <GroupElementView element={element} />
+    case "svg":
+      return <SvgElementView element={element} />    
     default:
       return null
   }
